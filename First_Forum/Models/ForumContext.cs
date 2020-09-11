@@ -12,7 +12,7 @@ namespace First_Forum.Models
         {
         }
 
-        public virtual DbSet<Forum> Fora { get; set; }
+        public virtual DbSet<Forum> Forum { get; set; }
         public virtual DbSet<Forum_post> Forum_post { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

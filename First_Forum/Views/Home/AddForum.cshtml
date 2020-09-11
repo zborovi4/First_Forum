@@ -1,0 +1,24 @@
+﻿@model First_Forum.Models.Forum
+
+@{
+    ViewBag.Title = "AddForum";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div>
+    <h4>Add forum</h4>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.LabelFor(m => m.Name, "Forum name")
+        <br />
+        @Html.EditorFor(m => m.Name)
+        <br /><br />
+        <p><input type="submit" value="Add" /></p>
+    }
+
+</div>
+

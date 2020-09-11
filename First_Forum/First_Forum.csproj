@@ -178,6 +178,7 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Forum.cs" />
     <Compile Include="Models\ForumContext.cs" />
+    <Compile Include="Models\ForumsInfo.cs" />
     <Compile Include="Models\Forum_post.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -244,6 +245,7 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Home\AddForum.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
