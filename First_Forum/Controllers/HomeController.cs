@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using First_Forum.Models;
@@ -57,6 +59,109 @@ namespace First_Forum.Controllers
 
                 throw;
             }
+            return RedirectToAction("Index");
+        }
+
+        public async Task<ActionResult> EditForum(int? id)
+        {
+            try
+            {
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                using (ForumContext db = new ForumContext())
+                {
+                    Forum forum = await db.Forum.FindAsync(id);
+                    if (forum == null)
+                    {
+                        return HttpNotFound();
+                    }
+                    return View(forum);
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditForum([Bind(Include = "Forum_id,Name")] Forum forum)
+        {
+            try
+            {
+                using (ForumContext db = new ForumContext())
+                {
+                    if (ModelState.IsValid)
+                    {
+                        db.Entry(forum).State = EntityState.Modified;
+                        await db.SaveChangesAsync();
+                        return RedirectToAction("Index");
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return View(forum);
+        }
+
+        public async Task<ActionResult> DeleteForum(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            try
+            {
+                using (ForumContext db = new ForumContext())
+                {
+                    Forum forum = await db.Forum.FindAsync(id);
+                    if (forum == null)
+                    {
+                        return HttpNotFound();
+                    }
+                    return View(forum);
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+        }
+
+        // POST: Forum/Delete/5
+        [HttpPost, ActionName("DeleteForum")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteConfirmed(int id)
+        {
+            try
+            {
+                using (ForumContext db = new ForumContext())
+                {
+                    Forum forum = await db.Forum.FindAsync(id);
+                    db.Forum.Remove(forum);
+                    await db.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
             return RedirectToAction("Index");
         }
 

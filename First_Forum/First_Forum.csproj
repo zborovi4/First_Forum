@@ -246,6 +246,8 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Home\AddForum.cshtml" />
+    <Content Include="Views\Home\EditForum.cshtml" />
+    <Content Include="Views\Home\DeleteForum.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
