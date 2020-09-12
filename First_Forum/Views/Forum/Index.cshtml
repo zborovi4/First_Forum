@@ -1,0 +1,39 @@
+﻿@model IEnumerable<First_Forum.Models.TopicsInfo>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Subject</th>
+            <th>Created By</th>
+            <th>Replies</th>
+        </tr>
+    </thead>
+    <tbody id="topics_data">
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(m => item.Id)</td>
+                <td>@Html.DisplayFor(m => item.Subject)</td>
+                <td>@Html.DisplayFor(m => item.CreatedBy)</td>
+                <td>@Html.DisplayFor(m => item.Replies)</td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

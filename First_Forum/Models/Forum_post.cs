@@ -8,10 +8,9 @@ namespace First_Forum.Models
 
     public partial class Forum_post
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Required]
         [StringLength(250)]
         public string Author { get; set; }
 
