@@ -11,9 +11,10 @@
 
 
 
-<table class="table table-bordered table-hover">
+<table id="td_topics" class="table table-bordered table-hover">
     <thead>
         <tr>
+            <th></th>
             <th>Id</th>
             <th>Subject</th>
             <th>Created By</th>
@@ -25,6 +26,7 @@
         {
             <tr>
                 <td>@Html.DisplayFor(m => item.Id)</td>
+                <td>@Html.DisplayFor(m => item.Topic_id)</td>
                 <td>@Html.DisplayFor(m => item.Subject)</td>
                 <td>@Html.DisplayFor(m => item.CreatedBy)</td>
                 <td>@Html.DisplayFor(m => item.Replies)</td>
@@ -35,4 +37,17 @@
         }
     </tbody>
 </table>
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#td_topics').on('click', 'tbody tr', function () {
+                var idx = $(this).children('td:nth-child(2)');
+                window.location.href = '/Topic/Index/' + idx.text();
+            });
+        });
+
+    </script>
+}
 
