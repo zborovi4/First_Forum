@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -14,7 +15,7 @@ namespace First_Forum.Controllers
         private ForumContext db = new ForumContext();      
 
         // GET: Forum
-        public async Task<ActionResult> Index(int id)
+        public async Task<ActionResult> Index(int? id)
         {
             List<TopicsInfo> topicsInfo;
             try
@@ -31,33 +32,22 @@ namespace First_Forum.Controllers
                         Replies = db.Forum_post.Count(p => p.Topic_id == t.Topic_id)
                     }).Where(t => t.Subject.Length > 0 && t.IdForum == id).ToList();
                 }
+               
             }
             catch (Exception)
             {
 
                 throw;
             }
+            TempData["value"] = id;
             return View(topicsInfo);
         }
-
-        // GET: Forum/Details/5
-        //public async Task<ActionResult> Details(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        //    }
-        //    TopicsInfo topicsInfo = await db.TopicsInfoes.FindAsync(id);
-        //    if (topicsInfo == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    return View(topicsInfo);
-        //}
 
         // GET: Forum/Create
         public ActionResult Create()
         {
+            object value = TempData["value"];
+            TempData.Keep("value");
             return View();
         }
 
@@ -70,49 +60,51 @@ namespace First_Forum.Controllers
         {
             if (ModelState.IsValid)
             {
+                int forum_id = (int)TempData["value"];
                 var now = DateTime.Now;
                 var zeroDate = DateTime.MinValue.AddHours(now.Hour).AddMinutes(now.Minute).AddSeconds(now.Second).AddMilliseconds(now.Millisecond);
                 int uniqueId = (int)(zeroDate.Ticks / 10000);
 
-                forum_Post.Author = "Vasilisa";
+                forum_Post.Author = "Vasya"; // User.Identity.Name;
                 forum_Post.Date = DateTime.Now;
                 forum_Post.Post_id = 1;
                 forum_Post.Topic_id = uniqueId;
-                forum_Post.Forum_id = 3;
+                forum_Post.Forum_id = forum_id;
+
                 db.Forum_post.Add(forum_Post);
                 await db.SaveChangesAsync();
-                return RedirectToAction("Index", 3);
+                return RedirectToAction("Index", "Forum", forum_id); // перенаправить вьюшку в созданную тему
             }
 
             return View(forum_Post);
         }
 
 
-        // GET: Forum/Delete/5
-        //public async Task<ActionResult> Delete(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        //    }
-        //    TopicsInfo topicsInfo = await db.TopicsInfoes.FindAsync(id);
-        //    if (topicsInfo == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    return View(topicsInfo);
-        //}
+        //GET: Forum/Delete/5
+        public async Task<ActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Forum_post forum_Post = await db.Forum_post.FindAsync(id);
+            if (forum_Post == null)
+            {
+                return HttpNotFound();
+            }
+            return View(forum_Post);
+        }
 
-        // POST: Forum/Delete/5
+        //POST: Forum/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        //public async Task<ActionResult> DeleteConfirmed(int id)
-        //{
-        //    TopicsInfo topicsInfo = await db.TopicsInfoes.FindAsync(id);
-        //    //db.TopicsInfoes.Remove(topicsInfo);
-        //    await db.SaveChangesAsync();
-        //    return RedirectToAction("Index");
-        //}
+        public async Task<ActionResult> DeleteConfirmed(int id)
+        {
+            Forum_post forum_Post = await db.Forum_post.FindAsync(id);
+            db.Forum_post.Remove(forum_Post);
+            await db.SaveChangesAsync();
+            return RedirectToAction("Index", forum_Post.Forum_id); // сделать ретерн страницу с темами
+        }
 
         protected override void Dispose(bool disposing)
         {
