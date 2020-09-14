@@ -11,28 +11,44 @@ using First_Forum.Models;
 
 namespace First_Forum.Controllers
 {
+    [HandleError]
     public class TopicController : Controller
     {
         private ForumContext db = new ForumContext();
 
         // GET: Topic
-        public async Task<ActionResult> Index(int? id)
+        public ActionResult Index(int? id)
         {
-            var forum_posts = db.Forum_post.Select(p => new Post
-            { 
-                Id = p.Id,
-                Author = p.Author,
-                Topic = p.Topic,
-                Body = p.Body,
-                Date = p.Date,
-                Post_id = p.Post_id,
-                Topic_id = p.Topic_id,
-                Forum_id = p.Forum_id
-            }).Where(p => p.Topic_id == id);
+            try
+            {
+                id = null;
+                List<Post> forum_posts;
+                using (ForumContext fc = new ForumContext())
+                {
+                    forum_posts = fc.Forum_post.Select(p => new Post
+                    {
+                        Id = p.Id,
+                        Author = p.Author,
+                        Topic = p.Topic,
+                        Body = p.Body,
+                        Date = p.Date,
+                        Post_id = p.Post_id,
+                        Topic_id = p.Topic_id,
+                        Forum_id = p.Forum_id
+                    }).Where(p => p.Topic_id == id).ToList();
 
-            TempData["forum"] = forum_posts.FirstOrDefault().Forum_id;
-            TempData["topic"] = id;
-            return View(await forum_posts.ToListAsync());
+                    int f = forum_posts.FirstOrDefault().Forum_id;
+                    TempData["forum"] = f;
+                    TempData["topic"] = id;
+                }
+                return View(forum_posts);
+            }
+            catch (Exception ex)
+            {
+                return View(ex.Message);
+            }
+            return HttpNotFound();
+
         }
         
         // GET: Topic/Create
@@ -46,22 +62,38 @@ namespace First_Forum.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Body")] Forum_post forum_post)
+        public ActionResult Create([Bind(Include = "Body")] Forum_post forum_post)
         {
             if (ModelState.IsValid)
             {
-                forum_post.Author = "Lesya";
-                forum_post.Date = DateTime.Now;
-                forum_post.Forum_id = (int)TempData["forum"];
-                forum_post.Topic_id = (int)TempData["topic"];
-                forum_post.Post_id = db.Forum_post.Count(p => p.Topic_id == forum_post.Topic_id) + 1;
+                try
+                {
+                    using (ForumContext fc = new ForumContext())
+                    {
+                       
+                            forum_post.Author = "Lesya";
+                            forum_post.Date = DateTime.Now;
+                            forum_post.Forum_id = (int)TempData["forum"];
+                            forum_post.Topic_id = (int)TempData["topic"];
+                            forum_post.Post_id = fc.Forum_post.Count(p => p.Topic_id == forum_post.Topic_id) + 1;
 
-                db.Forum_post.Add(forum_post);
-                await db.SaveChangesAsync();
-                return RedirectToAction("Index");
+                            fc.Forum_post.Add(forum_post);
+                            fc.SaveChanges();
+                    }
+                    int id = forum_post.Topic_id;
+                    return RedirectToAction("Index", new { id = id });
+
+                }
+
+
+                catch (Exception ex)
+                {
+                    return View(ex.Message);
+                }
             }
-
+            ModelState.AddModelError("", "Error");
             return View(forum_post);
+            
         }
 
         // GET: Topic/Edit/5
@@ -90,9 +122,9 @@ namespace First_Forum.Controllers
             {
                 db.Entry(forum_post).State = EntityState.Modified;
                 await db.SaveChangesAsync();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", new { id = forum_post.Topic_id });
             }
-            return View(forum_post);
+            return null;
         }
 
         // GET: Topic/Delete/5
@@ -124,10 +156,12 @@ namespace First_Forum.Controllers
             {
                 var posts = await db.Forum_post.Where(p => p.Topic_id == forum_post.Topic_id).ToListAsync();
                 db.Forum_post.RemoveRange(posts);
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index", "Forum", new { id = forum_post.Forum_id });
             }
             
             await db.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { id = forum_post.Topic_id });
         }
 
         protected override void Dispose(bool disposing)

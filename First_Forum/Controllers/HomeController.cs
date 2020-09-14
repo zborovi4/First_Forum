@@ -30,10 +30,10 @@ namespace First_Forum.Controllers
 
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                return View(ex.Message);
             }
             return View(forumsInfo);
         }
@@ -54,10 +54,10 @@ namespace First_Forum.Controllers
                     db.SaveChanges();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                return View(ex.Message);
             }
             return RedirectToAction("Index");
         }
@@ -81,10 +81,10 @@ namespace First_Forum.Controllers
                 }
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                return View(ex.Message);
             }
 
 
@@ -106,10 +106,10 @@ namespace First_Forum.Controllers
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                return View(ex.Message);
             }
 
             return View(forum);
@@ -133,10 +133,10 @@ namespace First_Forum.Controllers
                     return View(forum);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                return View(ex.Message);
             }
 
 
@@ -156,10 +156,10 @@ namespace First_Forum.Controllers
                     await db.SaveChangesAsync();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                return View(ex.Message);
             }
 
             return RedirectToAction("Index");

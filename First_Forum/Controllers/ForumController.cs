@@ -34,10 +34,10 @@ namespace First_Forum.Controllers
                 }
                
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                return View(ex.Message);
             }
             TempData["value"] = id;
             return View(topicsInfo);
@@ -46,8 +46,6 @@ namespace First_Forum.Controllers
         // GET: Forum/Create
         public ActionResult Create()
         {
-            object value = TempData["value"];
-            TempData.Keep("value");
             return View();
         }
 
@@ -73,7 +71,7 @@ namespace First_Forum.Controllers
 
                 db.Forum_post.Add(forum_Post);
                 await db.SaveChangesAsync();
-                return RedirectToAction("Index", "Forum", forum_id); // перенаправить вьюшку в созданную тему
+                return RedirectToAction("Index", "Forum", new { id = forum_id }); 
             }
 
             return View(forum_Post);
@@ -103,7 +101,7 @@ namespace First_Forum.Controllers
             Forum_post forum_Post = await db.Forum_post.FindAsync(id);
             db.Forum_post.Remove(forum_Post);
             await db.SaveChangesAsync();
-            return RedirectToAction("Index", forum_Post.Forum_id); // сделать ретерн страницу с темами
+            return RedirectToAction("Index", new { id = forum_Post.Forum_id });
         }
 
         protected override void Dispose(bool disposing)
