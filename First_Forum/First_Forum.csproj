@@ -261,6 +261,7 @@
     <Content Include="Views\Topic\Details.cshtml" />
     <Content Include="Views\Topic\Edit.cshtml" />
     <Content Include="Views\Topic\Index.cshtml" />
+    <Content Include="Views\Account\DisplayEmail.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
