@@ -76,7 +76,6 @@ namespace First_Forum.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.Forum_id = new SelectList(db.Forum, "Forum_id", "Name", forum_post.Forum_id);
             return View(forum_post);
         }
 
@@ -93,7 +92,6 @@ namespace First_Forum.Controllers
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewBag.Forum_id = new SelectList(db.Forum, "Forum_id", "Name", forum_post.Forum_id);
             return View(forum_post);
         }
 
@@ -118,7 +116,16 @@ namespace First_Forum.Controllers
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Forum_post forum_post = await db.Forum_post.FindAsync(id);
-            db.Forum_post.Remove(forum_post);
+            if(forum_post.Post_id > 1)
+            {
+                db.Forum_post.Remove(forum_post);
+            }
+            else
+            {
+                var posts = await db.Forum_post.Where(p => p.Topic_id == forum_post.Topic_id).ToListAsync();
+                db.Forum_post.RemoveRange(posts);
+            }
+            
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
