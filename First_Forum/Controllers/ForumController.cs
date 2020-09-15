@@ -40,10 +40,13 @@ namespace First_Forum.Controllers
                 return View(ex.Message);
             }
             TempData["value"] = id;
+            ViewBag.Name = User.Identity.Name;
+            ViewBag.AdminRole = User.IsInRole("admin") ? true : false;
             return View(topicsInfo);
         }
 
         // GET: Forum/Create
+        [Authorize]
         public ActionResult Create()
         {
             return View();
@@ -52,6 +55,7 @@ namespace First_Forum.Controllers
         // POST: Forum/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind(Include = "Topic,Body")] Forum_post forum_Post)
@@ -63,7 +67,7 @@ namespace First_Forum.Controllers
                 var zeroDate = DateTime.MinValue.AddHours(now.Hour).AddMinutes(now.Minute).AddSeconds(now.Second).AddMilliseconds(now.Millisecond);
                 int uniqueId = (int)(zeroDate.Ticks / 10000);
 
-                forum_Post.Author = "Vasya"; // User.Identity.Name;
+                forum_Post.Author = User.Identity.Name;
                 forum_Post.Date = DateTime.Now;
                 forum_Post.Post_id = 1;
                 forum_Post.Topic_id = uniqueId;
@@ -79,6 +83,7 @@ namespace First_Forum.Controllers
 
 
         //GET: Forum/Delete/5
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
@@ -94,6 +99,7 @@ namespace First_Forum.Controllers
         }
 
         //POST: Forum/Delete/5
+        [Authorize(Roles = "admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)

@@ -8,6 +8,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using First_Forum.Models;
+using System.Web.Security;
 
 namespace First_Forum.Controllers
 {
@@ -21,7 +22,6 @@ namespace First_Forum.Controllers
         {
             try
             {
-                id = null;
                 List<Post> forum_posts;
                 using (ForumContext fc = new ForumContext())
                 {
@@ -41,6 +41,8 @@ namespace First_Forum.Controllers
                     TempData["forum"] = f;
                     TempData["topic"] = id;
                 }
+                ViewBag.Name = User.Identity.Name;
+                ViewBag.AdminRole = User.IsInRole("admin") ? true : false;
                 return View(forum_posts);
             }
             catch (Exception ex)
@@ -50,8 +52,9 @@ namespace First_Forum.Controllers
             return HttpNotFound();
 
         }
-        
+
         // GET: Topic/Create
+        [Authorize]
         public ActionResult Create()
         {
             return View();
@@ -60,6 +63,7 @@ namespace First_Forum.Controllers
         // POST: Topic/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Body")] Forum_post forum_post)
@@ -71,7 +75,7 @@ namespace First_Forum.Controllers
                     using (ForumContext fc = new ForumContext())
                     {
                        
-                            forum_post.Author = "Lesya";
+                            forum_post.Author = User.Identity.Name;
                             forum_post.Date = DateTime.Now;
                             forum_post.Forum_id = (int)TempData["forum"];
                             forum_post.Topic_id = (int)TempData["topic"];
@@ -97,6 +101,7 @@ namespace First_Forum.Controllers
         }
 
         // GET: Topic/Edit/5
+        [Authorize]
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
@@ -114,6 +119,7 @@ namespace First_Forum.Controllers
         // POST: Topic/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "Id,Author,Topic,Body,Date,Post_id,Topic_id,Forum_id")] Forum_post forum_post)
@@ -128,6 +134,7 @@ namespace First_Forum.Controllers
         }
 
         // GET: Topic/Delete/5
+        [Authorize]
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
@@ -143,6 +150,7 @@ namespace First_Forum.Controllers
         }
 
         // POST: Topic/Delete/5
+        [Authorize]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)

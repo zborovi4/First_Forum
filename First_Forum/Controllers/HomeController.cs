@@ -37,11 +37,14 @@ namespace First_Forum.Controllers
             }
             return View(forumsInfo);
         }
+
+        [Authorize]
         public ActionResult AddForum()
         {
             return PartialView("AddForum");
         }
 
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AddForum(Forum forum)
@@ -62,6 +65,7 @@ namespace First_Forum.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> EditForum(int? id)
         {
             try
@@ -90,6 +94,7 @@ namespace First_Forum.Controllers
 
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> EditForum([Bind(Include = "Forum_id,Name")] Forum forum)
@@ -115,6 +120,7 @@ namespace First_Forum.Controllers
             return View(forum);
         }
 
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> DeleteForum(int? id)
         {
             if (id == null)
@@ -142,7 +148,9 @@ namespace First_Forum.Controllers
 
         }
 
-        // POST: Forum/Delete/5
+
+        // POST: Forum/Delete/
+        [Authorize(Roles = "admin")]
         [HttpPost, ActionName("DeleteForum")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)

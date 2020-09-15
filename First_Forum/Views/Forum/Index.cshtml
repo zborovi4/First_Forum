@@ -14,7 +14,6 @@
 <table id="td_topics" class="table table-bordered table-hover">
     <thead>
         <tr>
-            <th></th>
             <th>Id</th>
             <th>Subject</th>
             <th>Created By</th>
@@ -24,16 +23,19 @@
     <tbody id="topics_data">
         @foreach (var item in Model)
         {
-            <tr>
-                <td>@Html.DisplayFor(m => item.Id)</td>
-                <td>@Html.DisplayFor(m => item.Topic_id)</td>
-                <td>@Html.DisplayFor(m => item.Subject)</td>
-                <td>@Html.DisplayFor(m => item.CreatedBy)</td>
-                <td>@Html.DisplayFor(m => item.Replies)</td>
+        <tr>
+            <td>@Html.DisplayFor(m => item.Topic_id)</td>
+            <td>@Html.DisplayFor(m => item.Subject)</td>
+            <td>@Html.DisplayFor(m => item.CreatedBy)</td>
+            <td>@Html.DisplayFor(m => item.Replies)</td>
+            @if (ViewBag.Name == item.CreatedBy || ViewBag.AdminRole == true)
+            {
                 <td>
                     @Html.ActionLink("Delete", "Delete", new { id = item.Id })
                 </td>
-            </tr>
+            }
+
+        </tr>
         }
     </tbody>
 </table>
@@ -43,7 +45,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $('#td_topics').on('click', 'tbody tr', function () {
-                var idx = $(this).children('td:nth-child(2)');
+                var idx = $(this).children('td:nth-child(1)');
                 window.location.href = '/Topic/Index/' + idx.text();
             });
         });

@@ -255,10 +255,8 @@
     <Content Include="Views\Forum\Index.cshtml" />
     <Content Include="Views\Forum\Create.cshtml" />
     <Content Include="Views\Forum\Delete.cshtml" />
-    <Content Include="Views\Forum\Edit.cshtml" />
     <Content Include="Views\Topic\Create.cshtml" />
     <Content Include="Views\Topic\Delete.cshtml" />
-    <Content Include="Views\Topic\Details.cshtml" />
     <Content Include="Views\Topic\Edit.cshtml" />
     <Content Include="Views\Topic\Index.cshtml" />
     <Content Include="Views\Account\DisplayEmail.cshtml" />
